@@ -118,7 +118,7 @@ docker exec app-version-frontend grep "whitespace-pre-wrap" /usr/share/nginx/htm
 ### 問題 2：編輯功能無法使用
 **解決方案：**
 ```
-1. 確認後端服務正常運行：curl http://localhost:8000/
+1. 確認後端服務正常運行：curl http://localhost:8321/
 2. 檢查管理密碼：admin123
 3. 查看瀏覽器控制台是否有 JavaScript 錯誤
 ```
@@ -126,7 +126,7 @@ docker exec app-version-frontend grep "whitespace-pre-wrap" /usr/share/nginx/htm
 ### 問題 3：資料未保存
 **解決方案：**
 ```
-1. 檢查後端 API 連線：curl http://localhost:8000/api/versions
+1. 檢查後端 API 連線：curl http://localhost:8321/api/versions
 2. 確認資料庫檔案權限：ls -la data/app_versions.db
 3. 查看後端容器日誌：docker-compose logs backend
 ```

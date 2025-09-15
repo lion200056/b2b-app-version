@@ -10,7 +10,7 @@ services:
     container_name: app-version-backend
     restart: unless-stopped
     ports:
-      - "8000:8000"
+      - "8321:8321"
     volumes:
       # 持久化資料庫檔案
       - ./data:/app/data
@@ -22,7 +22,7 @@ services:
     networks:
       - app-network
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8000/"]
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8321/"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -36,7 +36,7 @@ services:
     container_name: app-version-frontend
     restart: unless-stopped
     ports:
-      - "80:80"
+      - "3080:80"
     depends_on:
       backend:
         condition: service_healthy

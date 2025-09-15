@@ -30,7 +30,7 @@ sleep 10
 
 # 測試後端API
 echo "🔍 測試後端 API..."
-if curl -s http://localhost:8000/ > /dev/null; then
+if curl -s http://localhost:8321/ > /dev/null; then
     echo "✅ 後端 API 運行正常"
 else
     echo "❌ 後端 API 啟動失敗"
@@ -61,9 +61,9 @@ docker-compose ps
 echo ""
 echo "✅ 系統啟動完成！"
 echo "======================================="
-echo "🌐 前端訪問地址: http://localhost"
-echo "🔧 後端 API 地址: http://localhost:8000"
-echo "📚 API 文件地址: http://localhost:8000/docs"
+echo "🌐 前端訪問地址: http://localhost:3080"
+echo "🔧 後端 API 地址: http://localhost:8321"
+echo "📚 API 文件地址: http://localhost:8321/docs"
 echo ""
 echo "🔑 預設管理密碼: admin123"
 echo "⚠️  生產環境請務必修改密碼！"

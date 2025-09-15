@@ -64,9 +64,9 @@ chmod +x start.sh
 ```
 
 3. **訪問系統**
-- 前端介面: http://localhost
-- 後端 API: http://localhost:8000
-- API 文件: http://localhost:8000/docs
+- 前端介面: http://localhost:3080
+- 後端 API: http://localhost:8321
+- API 文件: http://localhost:8321/docs
 
 ### 手動部署
 
@@ -200,8 +200,8 @@ ADMIN_PASSWORD = "your_secure_password_here"
 
 系統啟動後，你可以通過以下地址查看完整的 API 文件：
 
-- **Swagger UI**: http://localhost:8000/docs
-- **ReDoc**: http://localhost:8000/redoc
+- **Swagger UI**: http://localhost:8321/docs
+- **ReDoc**: http://localhost:8321/redoc
 
 ### 主要 API 端點
 
@@ -221,8 +221,8 @@ ADMIN_PASSWORD = "your_secure_password_here"
 1. **端口被佔用**
 ```bash
 # 檢查端口使用情況
-lsof -i :80
-lsof -i :8000
+lsof -i :3080
+lsof -i :8321
 
 # 修改 docker-compose.yml 中的端口配置
 ```

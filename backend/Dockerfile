@@ -41,11 +41,11 @@ RUN touch /app/data/app_versions.db && \
     chmod 666 /app/data/app_versions.db
 
 # 暴露端口
-EXPOSE 8000
+EXPOSE 8321
 
 # 健康檢查
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD wget --no-verbose --tries=1 --spider http://localhost:8000/ || exit 1
+    CMD wget --no-verbose --tries=1 --spider http://localhost:8321/ || exit 1
 
 # 啟動命令
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8321", "--reload"]

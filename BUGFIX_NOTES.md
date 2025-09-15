@@ -82,7 +82,7 @@ white-space: pre-wrap;
 
 創建測試資料驗證修復效果：
 ```bash
-curl -X POST http://localhost:8000/api/versions \
+curl -X POST http://localhost:8321/api/versions \
   -H "Content-Type: application/json" \
   -d '{
     "version": "v2.4.0",

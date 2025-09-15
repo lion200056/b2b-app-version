@@ -35,7 +35,7 @@ constructor() {
 - **修改後**: 自動跟隨當前頁面的協議
 
 ### 3. 🌐 **多環境支援**
-- **開發環境**: `localhost:80` → `/api` → `backend:8000`
+- **開發環境**: `localhost:3080` → `/api` → `backend:8321`
 - **測試環境**: `test.example.com` → `/api` → 後端服務
 - **生產環境**: `app.company.com` → `/api` → 生產後端
 
@@ -51,7 +51,7 @@ constructor() {
 ```nginx
 # API 路由代理到後端
 location /api/ {
-    proxy_pass http://backend:8000/api/;
+    proxy_pass http://backend:8321/api/;
     proxy_set_header Host $host;
     proxy_set_header X-Real-IP $remote_addr;
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -76,7 +76,7 @@ location /api/ {
 ```
 使用者 → http://localhost/
 前端請求 → /api/versions
-Nginx 代理 → http://backend:8000/api/versions
+Nginx 代理 → http://backend:8321/api/versions
 ```
 
 ### 場景 2：反向代理部署
@@ -97,7 +97,7 @@ Nginx 代理 → http://backend:8000/api/versions
 ```
 使用者 → https://services.company.com/version-manager/
 前端請求 → /api/versions
-API Gateway → internal-version-service:8000/versions
+API Gateway → internal-version-service:8321/versions
 ```
 
 ## 🔍 技術驗證
@@ -134,7 +134,7 @@ export default {
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:8000',
+        target: 'http://localhost:308321',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, '/api')
       }
@@ -150,7 +150,7 @@ module.exports = {
   devServer: {
     proxy: {
       '/api': {
-        target: 'http://localhost:8000',
+        target: 'http://localhost:308321',
         changeOrigin: true,
         pathRewrite: {
           '^/api': '/api'
@@ -165,7 +165,7 @@ module.exports = {
 ```json
 // package.json
 {
-  "proxy": "http://localhost:8000"
+  "proxy": "http://localhost:308321"
 }
 ```
 

@@ -38,9 +38,9 @@ cd app
 ./start-simple.sh
 
 # 3. 訪問系統
-# 前端: http://localhost
-# 後端: http://localhost:8000
-# API文檔: http://localhost:8000/docs
+# 前端: http://localhost:3080
+# 後端: http://localhost:8321
+# API文檔: http://localhost:8321/docs
 ```
 
 ## 📊 功能清單
@@ -181,7 +181,7 @@ cd frontend
 
 1. 查看 [README.md](README.md) 詳細說明
 2. 檢查 [CHANGELOG.md](CHANGELOG.md) 更新日誌
-3. 參考 API 文檔: http://localhost:8000/docs
+3. 參考 API 文檔: http://localhost:8321/docs
 4. 提交 Issue 回報問題
 
 ---
