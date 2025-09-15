@@ -21,12 +21,6 @@ services:
       - DATABASE_PATH=/app/data/app_versions.db
     networks:
       - app-network
-    healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8321/"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 60s
 
   # 前端服務 (Nginx)
   frontend:
@@ -38,16 +32,9 @@ services:
     ports:
       - "3080:80"
     depends_on:
-      backend:
-        condition: service_healthy
+      - backend
     networks:
       - app-network
-    healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost/"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 10s
 
 # 網路設定
 networks:
