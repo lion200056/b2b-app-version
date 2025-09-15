@@ -1,0 +1,45 @@
+# B2B-APP 版本管理系統 - Python 依賴套件
+# FastAPI 後端核心依賴
+
+# FastAPI 框架
+fastapi==0.104.1
+
+# ASGI 伺服器
+uvicorn[standard]==0.24.0
+
+# HTTP 請求處理
+httpx==0.25.2
+
+# 資料驗證與序列化
+pydantic==2.5.0
+
+# 資料庫 (SQLite 內建於 Python，不需額外安裝)
+# 但如果需要進階功能可使用：
+# sqlalchemy==2.0.23
+
+# 日期時間處理
+python-dateutil==2.8.2
+
+# 環境變數管理
+python-dotenv==1.0.0
+
+# CORS 支援（FastAPI 內建）
+# 密碼雜湊（如果需要更安全的密碼處理）
+passlib[bcrypt]==1.7.4
+
+# JSON 處理增強
+orjson==3.9.10
+
+# 檔案處理
+aiofiles==23.2.1
+
+# 測試工具（開發用）
+pytest==7.4.3
+pytest-asyncio==0.21.1
+
+# 程式碼品質工具（開發用）
+flake8==6.1.0
+black==23.11.0
+
+# 型別檢查（開發用）
+mypy==1.7.1

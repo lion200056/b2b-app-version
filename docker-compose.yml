@@ -1,0 +1,62 @@
+# B2B-APP 版本管理系統 - Docker Compose 設定
+# 一鍵部署前後端服務
+
+services:
+  # 後端服務 (FastAPI)
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: app-version-backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      # 持久化資料庫檔案
+      - ./data:/app/data
+      # 開發模式下掛載源碼 (生產環境可移除)
+      - ./backend:/app
+    environment:
+      - PYTHONPATH=/app
+      - DATABASE_PATH=/app/data/app_versions.db
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+  # 前端服務 (Nginx)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: app-version-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+# 網路設定
+networks:
+  app-network:
+    driver: bridge
+    name: app-version-network
+
+# 卷設定
+volumes:
+  app-data:
+    driver: local
+    name: app-version-data
