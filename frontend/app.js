@@ -49,6 +49,19 @@ class VersionManager {
         passwordInput?.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') this.checkPassword();
         });
+
+        // 狀態選擇變化事件
+        const statusSelect = document.getElementById('status');
+        statusSelect?.addEventListener('change', () => this.updatePlannedFeaturesLabel());
+
+        // 文案生成器相關事件
+        const generateNotice = document.getElementById('generateNotice');
+        const copyNotice = document.getElementById('copyNotice');
+        const clearNotice = document.getElementById('clearNotice');
+        
+        generateNotice?.addEventListener('click', () => this.generateReleaseNotice());
+        copyNotice?.addEventListener('click', () => this.copyNoticeToClipboard());
+        clearNotice?.addEventListener('click', () => this.clearGeneratedNotice());
     }
 
     showLoading() {
@@ -186,6 +199,8 @@ class VersionManager {
             this.fillFormData(version);
         } else {
             document.getElementById('versionForm')?.reset();
+            // 新增時也需要更新標籤
+            setTimeout(() => this.updatePlannedFeaturesLabel(), 100);
         }
 
         document.getElementById('versionModal')?.classList.remove('hidden');
@@ -197,7 +212,7 @@ class VersionManager {
             'type': version.release_type,
             'status': version.status,
             'os': version.os_type,
-            'description': version.description || '',
+            'plannedFeatures': version.planned_features || '',
             'testDate': version.qa_date || '',
             'reviewDate': version.submission_date || '',
             'reviewText': version.release_notes || '',
@@ -210,6 +225,130 @@ class VersionManager {
             const field = document.getElementById(fieldId);
             if (field) field.value = value;
         });
+        
+        // 更新標籤顯示
+        this.updatePlannedFeaturesLabel();
+    }
+
+    updatePlannedFeaturesLabel() {
+        const statusSelect = document.getElementById('status');
+        const plannedFeaturesLabel = document.querySelector('label[for="plannedFeatures"]');
+        
+        if (statusSelect && plannedFeaturesLabel) {
+            const isCompleted = statusSelect.value === '完成上線';
+            plannedFeaturesLabel.textContent = isCompleted ? '釋出功能' : '預計釋出功能';
+        }
+    }
+
+    generateReleaseNotice() {
+        // 取得表單資料
+        const versionInput = document.getElementById('version')?.value || '';
+        const osType = document.getElementById('os')?.value || '雙系統';
+        const plannedFeatures = document.getElementById('plannedFeatures')?.value || '';
+        const releaseDate = document.getElementById('releaseDate')?.value || '';
+        const notes = document.getElementById('notes')?.value || '';
+        
+        if (!versionInput || !plannedFeatures) {
+            this.showNotification('請先填寫版號和預計釋出功能', 'error');
+            return;
+        }
+
+        // 處理版號格式
+        const version = versionInput.startsWith('v') ? versionInput : `v${versionInput}`;
+        
+        // 處理系統類型
+        let osDisplay = '';
+        switch(osType) {
+            case 'iOS': osDisplay = 'iOS'; break;
+            case 'Android': osDisplay = 'Android'; break;
+            case '雙系統': osDisplay = 'iOS & Android'; break;
+            default: osDisplay = osType;
+        }
+        
+        // 處理上線時間
+        let releaseDateDisplay = '';
+        if (releaseDate) {
+            const date = new Date(releaseDate);
+            const month = date.getMonth() + 1;
+            const day = date.getDate();
+            const hours = date.getHours();
+            const minutes = date.getMinutes().toString().padStart(2, '0');
+            releaseDateDisplay = `已於今早 ${month}/${day} ${hours}:${minutes} 上架完成囉`;
+        } else {
+            releaseDateDisplay = '即將上架';
+        }
+        
+        // 處理功能描述 - 自動加上編號
+        const featuresArray = plannedFeatures.split('\n').filter(item => item.trim());
+        const numberedFeatures = featuresArray.map((item, index) => {
+            const trimmedItem = item.trim();
+            // 如果已經有編號就不再加
+            if (/^\d+[\.\、]/.test(trimmedItem)) {
+                return trimmedItem;
+            }
+            return `${index + 1}、${trimmedItem}`;
+        }).join('\n');
+        
+        // 生成文案
+        let notice = `🎉【B2B App 更版通知】\n\n`;
+        notice += `${osDisplay} ${version} 版\n`;
+        notice += `${releaseDateDisplay}\n\n`;
+        notice += `● 更版說明\n`;
+        
+        if (osType === 'Android') {
+            notice += `此版針對安卓系統\n`;
+        } else if (osType === 'iOS') {
+            notice += `此版針對蘋果系統\n`;
+        } else {
+            notice += `此版針對雙系統\n`;
+        }
+        
+        notice += `${numberedFeatures}\n\n`;
+        
+        if (notes.trim()) {
+            notice += `● 備註\n${notes.trim()}\n`;
+        }
+        
+        // 顯示生成的文案
+        const generatedNoticeElement = document.getElementById('generatedNotice');
+        if (generatedNoticeElement) {
+            generatedNoticeElement.value = notice;
+            
+            // 啟用複製和清除按鈕
+            document.getElementById('copyNotice').disabled = false;
+            document.getElementById('clearNotice').disabled = false;
+        }
+        
+        this.showNotification('🎉 更版通知文案已生成！', 'success');
+    }
+
+    async copyNoticeToClipboard() {
+        const generatedNoticeElement = document.getElementById('generatedNotice');
+        if (!generatedNoticeElement || !generatedNoticeElement.value) {
+            this.showNotification('沒有可複製的文案', 'error');
+            return;
+        }
+
+        try {
+            await navigator.clipboard.writeText(generatedNoticeElement.value);
+            this.showNotification('📋 文案已複製到剪貼簿！', 'success');
+        } catch (err) {
+            // 備用方案：使用舊的方法
+            generatedNoticeElement.select();
+            document.execCommand('copy');
+            this.showNotification('📋 文案已複製到剪貼簿！', 'success');
+        }
+    }
+
+    clearGeneratedNotice() {
+        const generatedNoticeElement = document.getElementById('generatedNotice');
+        if (generatedNoticeElement) {
+            generatedNoticeElement.value = '';
+            
+            // 禁用複製和清除按鈕
+            document.getElementById('copyNotice').disabled = true;
+            document.getElementById('clearNotice').disabled = true;
+        }
     }
 
     closeVersionModal() {
@@ -262,7 +401,7 @@ class VersionManager {
             os_type: document.getElementById('os')?.value || '雙系統',
             release_type: document.getElementById('type')?.value || 'Bug修復',
             status: document.getElementById('status')?.value || '確認要釋出的項目中',
-            description: document.getElementById('description')?.value || '',
+            planned_features: document.getElementById('plannedFeatures')?.value || '',
             progress_summary: document.getElementById('progressNote')?.value || '',
             qa_date: document.getElementById('testDate')?.value || '',
             submission_date: document.getElementById('reviewDate')?.value || '',
@@ -395,6 +534,11 @@ class VersionManager {
                     <div class="flex justify-between items-center">
                         <div class="flex items-center gap-3">
                             <span class="text-white text-xl transform transition-transform ${version.expanded ? 'rotate-90' : ''}">▶</span>
+                            <div class="bg-white bg-opacity-95 px-4 py-2 rounded-full shadow-lg border-2 border-white">
+                                <span class="text-sm font-bold ${this.getStatusTextClass(version.status)}">
+                                    ${this.getStatusIcon(version.status)} ${version.status}
+                                </span>
+                            </div>
                             <div class="flex items-center gap-2">
                                 <span class="text-2xl">${version.expanded ? '📂' : '📁'}</span>
                                 <h3 class="text-xl font-bold text-white">${version.version}</h3>
@@ -405,11 +549,6 @@ class VersionManager {
                             </div>
                         </div>
                         <div class="flex items-center gap-3">
-                            <div class="bg-white bg-opacity-95 px-4 py-2 rounded-full shadow-lg border-2 border-white">
-                                <span class="text-sm font-bold ${this.getStatusTextClass(version.status)}">
-                                    ${this.getStatusIcon(version.status)} ${version.status}
-                                </span>
-                            </div>
                             ${this.isEditMode ? `
                                 <div class="flex gap-1" onclick="event.stopPropagation()">
                                     <button onclick="versionManager.openVersionModal(${JSON.stringify(version).replace(/"/g, '&quot;')})" class="bg-white bg-opacity-20 hover:bg-opacity-30 text-white p-2 rounded-lg transition-all">
@@ -427,8 +566,8 @@ class VersionManager {
                 <!-- Content -->
                 <div class="transition-all duration-300 ${version.expanded ? 'max-h-none opacity-100' : 'max-h-0 opacity-0 overflow-hidden'}">
                     <div class="p-6 space-y-6">
-                        <!-- 現在進度說明 - 突出顯示 -->
-                        ${version.progress_summary ? `
+                        <!-- 現在進度說明 - 突出顯示，但完成上線狀態不顯示 -->
+                        ${version.progress_summary && version.status !== '完成上線' ? `
                             <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border-l-4 border-blue-500 p-4 rounded-r-lg">
                                 <div class="flex items-center gap-2 mb-2">
                                     <span class="text-lg">🚀</span>
@@ -438,12 +577,12 @@ class VersionManager {
                             </div>
                         ` : ''}
                         
-                        <!-- 功能描述 -->
-                        <div class="bg-gray-50 p-4 rounded-lg">
-                            <h4 class="font-semibold text-gray-800 mb-3 flex items-center gap-2">
-                                <span>📋</span> 更新功能描述
+                        <!-- 預計釋出功能/釋出功能 - 根據狀態顯示不同標題 -->
+                        <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                            <h4 class="font-semibold text-blue-800 mb-3 flex items-center gap-2">
+                                <span>${version.status === '完成上線' ? '🚀' : '🎯'}</span> ${version.status === '完成上線' ? '釋出功能' : '預計釋出功能'}
                             </h4>
-                            <div class="text-gray-700 leading-relaxed whitespace-pre-wrap">${version.description || '-'}</div>
+                            <div class="text-blue-700 leading-relaxed whitespace-pre-wrap">${version.planned_features || '-'}</div>
                         </div>
                         
                         <!-- 時間軸 -->

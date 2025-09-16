@@ -48,7 +48,7 @@ class VersionBase(BaseModel):
     os_type: str = Field(..., description="作業系統: iOS, Android, 雙系統")
     release_type: str = Field(..., description="類型: Bug修復, 新增功能, 新增功能&功能修復")
     status: str = Field(..., description="狀態: 確認要釋出的項目中, 開發中, User測試中, 送審中, 完成上線")
-    description: Optional[str] = Field(None, description="更新功能描述")
+    planned_features: Optional[str] = Field(None, description="預計釋出功能")
     progress_summary: Optional[str] = Field(None, description="現在進度說明")
     qa_date: Optional[str] = Field(None, description="測試時間")
     submission_date: Optional[str] = Field(None, description="送審時間")
@@ -89,6 +89,7 @@ def init_database():
             release_type TEXT NOT NULL,
             status TEXT NOT NULL,
             description TEXT,
+            planned_features TEXT,
             progress_summary TEXT,
             qa_date TEXT,
             submission_date TEXT,
@@ -100,6 +101,13 @@ def init_database():
         )
     ''')
     
+    # 檢查並添加 planned_features 欄位（如果不存在）
+    cursor.execute("PRAGMA table_info(app_versions)")
+    columns = [column[1] for column in cursor.fetchall()]
+    if 'planned_features' not in columns:
+        cursor.execute('ALTER TABLE app_versions ADD COLUMN planned_features TEXT')
+        logger.info("Added planned_features column to app_versions table")
+    
     # 檢查是否已有資料，如果沒有則插入範例資料
     cursor.execute('SELECT COUNT(*) FROM app_versions')
     count = cursor.fetchone()[0]
@@ -107,13 +115,13 @@ def init_database():
     if count == 0:
         sample_data = [
             ('v2.2.0', '雙系統', '新增功能&功能修復', '確認要釋出的項目中', 
-             '新增AI推薦功能、修復支付流程bug、優化介面設計', '正在進行需求確認，預計本週完成功能規格書',
+             'AI推薦功能、支付流程優化、介面設計改進', '正在進行需求確認，預計本週完成功能規格書',
              '', '', '', '', '預計下個月開始開發'),
             ('v2.1.0', '雙系統', '新增功能', '開發中', 
-             '新增會員等級系統、優化購物車流程、修復登入問題', '會員系統已完成80%，購物車優化進行中',
+             '會員等級系統、購物車流程優化、登入問題修復', '會員系統已完成80%，購物車優化進行中',
              '2024-01-15', '2024-01-20', '2024-01-25', '本次更新包含重要功能優化，提升用戶體驗', '需要特別注意會員資料遷移'),
             ('v2.0.5', 'iOS', 'Bug修復', '完成上線', 
-             '修復iOS 17兼容性問題、解決閃退問題', '已完成上線，監控中',
+             '', '已完成上線，監控中',
              '2024-01-05', '2024-01-08', '2024-01-10', '緊急修復版本，解決iOS 17兼容性問題', '已完成上線，用戶反饋良好')
         ]
         
@@ -121,7 +129,7 @@ def init_database():
         for data in sample_data:
             cursor.execute('''
                 INSERT INTO app_versions 
-                (version, os_type, release_type, status, description, progress_summary,
+                (version, os_type, release_type, status, planned_features, progress_summary,
                  qa_date, submission_date, live_date, release_notes, remarks, created_at, updated_at)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ''', data + (current_time, current_time))
@@ -221,12 +229,12 @@ async def create_version(version: VersionCreate):
         
         cursor.execute('''
             INSERT INTO app_versions 
-            (version, os_type, release_type, status, description, progress_summary,
+            (version, os_type, release_type, status, planned_features, progress_summary,
              qa_date, submission_date, live_date, release_notes, remarks, created_at, updated_at)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''', (
             version.version, version.os_type, version.release_type, version.status,
-            version.description, version.progress_summary, version.qa_date,
+            version.planned_features, version.progress_summary, version.qa_date,
             version.submission_date, version.live_date, version.release_notes,
             version.remarks, current_time, current_time
         ))
@@ -262,13 +270,13 @@ async def update_version(version_id: int, version: VersionUpdate):
         cursor.execute('''
             UPDATE app_versions SET
                 version = ?, os_type = ?, release_type = ?, status = ?,
-                description = ?, progress_summary = ?, qa_date = ?,
+                planned_features = ?, progress_summary = ?, qa_date = ?,
                 submission_date = ?, live_date = ?, release_notes = ?,
                 remarks = ?, updated_at = ?
             WHERE id = ?
         ''', (
             version.version, version.os_type, version.release_type, version.status,
-            version.description, version.progress_summary, version.qa_date,
+            version.planned_features, version.progress_summary, version.qa_date,
             version.submission_date, version.live_date, version.release_notes,
             version.remarks, current_time, version_id
         ))
