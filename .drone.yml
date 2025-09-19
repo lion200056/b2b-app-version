@@ -10,24 +10,13 @@ trigger:
 
 steps:
 - name: deploy
-  image: docker:latest
+  image: alpine/git
   commands:
   - echo "Starting auto deployment..."
-  - cd /opt/b2b-app-version
-  - git fetch --all
-  - git pull origin main
-  - docker compose down --remove-orphans || true
-  - docker compose up -d --build
-  - sleep 10
-  - docker compose ps
-  - echo "Deployment completed!"
-  volumes:
-  - name: docker-sock
-    path: /var/run/docker.sock
-  environment:
-    DOCKER_HOST: unix:///var/run/docker.sock
-
-volumes:
-- name: docker-sock
-  host:
-    path: /var/run/docker.sock
+  - echo "This pipeline will trigger deployment via webhook or manual process"
+  - echo "Repository updated successfully"
+  - echo "Please manually run deployment on target server:"
+  - echo "cd /opt/b2b-app-version"
+  - echo "git pull origin main"
+  - echo "docker compose down --remove-orphans"
+  - echo "docker compose up -d --build"
