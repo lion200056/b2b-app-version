@@ -18,5 +18,5 @@ steps:
   - echo "Please manually run deployment on target server:"
   - echo "cd /home/jincoco/app/b2b-app-version"
   - echo "git pull origin main"
-  - echo "docker compose down --remove-orphans"
-  - echo "docker compose up -d --build"
+  - echo "sudo docker compose down --remove-orphans"
+  - echo "sudo docker compose up -d --build"
