@@ -25,7 +25,7 @@ steps:
   - name: docker-sock
     path: /var/run/docker.sock
   environment:
-  - DOCKER_HOST=unix:///var/run/docker.sock
+    DOCKER_HOST: unix:///var/run/docker.sock
 
 volumes:
 - name: docker-sock
