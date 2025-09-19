@@ -16,7 +16,7 @@ steps:
   - echo "This pipeline will trigger deployment via webhook or manual process"
   - echo "Repository updated successfully"
   - echo "Please manually run deployment on target server:"
-  - echo "cd /opt/b2b-app-version"
+  - echo "cd /home/jincoco/app/b2b-app-version"
   - echo "git pull origin main"
   - echo "docker compose down --remove-orphans"
   - echo "docker compose up -d --build"
