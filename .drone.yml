@@ -9,10 +9,6 @@ trigger:
   event:
     - push
 
-# 設置工作空間路徑 (可通過環境變數覆蓋)
-environment:
-  DEPLOY_PATH: ${DEPLOY_PATH=/opt/b2b-app-version}
-
 # 簡化的部署步驟
 steps:
   # 部署到目標機器
@@ -20,10 +16,10 @@ steps:
     image: docker:latest
     commands:
       - echo "🚀 開始自動化部署..."
-      - echo "📍 部署路徑: $${DEPLOY_PATH}"
+      - echo "📍 部署路徑: /opt/b2b-app-version"
       
       # 切換到部署目錄
-      - cd $${DEPLOY_PATH}
+      - cd /opt/b2b-app-version
       
       # 拉取最新代碼
       - echo "📥 拉取最新代碼..."
@@ -52,12 +48,11 @@ steps:
       - echo "🔗 後端: http://localhost:8321"
       
     volumes:
-      # 掛載 Docker socket
       - name: docker-sock
         path: /var/run/docker.sock
     
     environment:
-      - DOCKER_HOST=unix:///var/run/docker.sock
+      DOCKER_HOST: unix:///var/run/docker.sock
 
 # 掛載卷
 volumes:
