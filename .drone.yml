@@ -2,59 +2,39 @@ kind: pipeline
 type: docker
 name: auto-deploy
 
-# 僅在 main 分支 push 時觸發
 trigger:
   branch:
     - main
   event:
     - push
 
-# 簡化的部署步驟
 steps:
-  # 部署到目標機器
   - name: deploy
     image: docker:latest
     commands:
-      - echo "🚀 開始自動化部署..."
-      - echo "📍 部署路徑: /opt/b2b-app-version"
-      
-      # 切換到部署目錄
+      - echo "Starting auto deployment..."
+      - echo "Deploy path: /opt/b2b-app-version"
       - cd /opt/b2b-app-version
-      
-      # 拉取最新代碼
-      - echo "📥 拉取最新代碼..."
+      - echo "Fetching latest code..."
       - git fetch --all
       - git pull origin main
-      
-      # 停止現有服務
-      - echo "🛑 停止現有服務..."
+      - echo "Stopping existing services..."
       - docker compose down --remove-orphans || true
-      
-      # 重新構建並啟動
-      - echo "🔨 重新構建並啟動服務..."
+      - echo "Building and starting services..."
       - docker compose up -d --build
-      
-      # 等待服務啟動
-      - echo "⏳ 等待服務啟動..."
+      - echo "Waiting for services to start..."
       - sleep 10
-      
-      # 檢查服務狀態
-      - echo "🔍 檢查服務狀態..."
+      - echo "Checking service status..."
       - docker compose ps
-      
-      # 完成通知
-      - echo "✅ 部署完成！"
-      - echo "🌐 前端: http://localhost:3080"
-      - echo "🔗 後端: http://localhost:8321"
-      
+      - echo "Deployment completed!"
+      - echo "Frontend: http://localhost:3080"
+      - echo "Backend: http://localhost:8321"
     volumes:
       - name: docker-sock
         path: /var/run/docker.sock
-    
     environment:
-      DOCKER_HOST: unix:///var/run/docker.sock
+      - DOCKER_HOST=unix:///var/run/docker.sock
 
-# 掛載卷
 volumes:
   - name: docker-sock
     host:
