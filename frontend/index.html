@@ -196,24 +196,29 @@
                     
                     <!-- 文案生成器 -->
                     <div class="bg-gradient-to-r from-purple-50 to-pink-50 p-4 rounded-lg border border-purple-200 mt-4">
-                        <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center justify-between mb-3 cursor-pointer" onclick="toggleNoticeGenerator()">
                             <h4 class="font-semibold text-purple-800 flex items-center gap-2">
-                                <span>✨</span> 更版通知文案生成器
+                                <span id="noticeToggleIcon">▶️</span> 更版通知文案生成器
                             </h4>
-                            <button type="button" id="generateNotice" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                                🎉 生成文案
-                            </button>
+                            <span class="text-purple-600 text-sm">點擊展開/收合</span>
                         </div>
-                        <div class="bg-white p-3 rounded border border-purple-200">
-                            <textarea id="generatedNotice" rows="8" class="w-full p-3 border border-gray-300 rounded-lg text-sm font-mono" placeholder="點擊「生成文案」按鈕自動產生更版通知文案..." readonly></textarea>
-                        </div>
-                        <div class="flex gap-2 mt-2">
-                            <button type="button" id="copyNotice" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm font-medium transition-colors" disabled>
-                                📋 複製
-                            </button>
-                            <button type="button" id="clearNotice" class="bg-gray-500 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm font-medium transition-colors" disabled>
-                                🗑️ 清除
-                            </button>
+                        <div id="noticeGeneratorContent" class="hidden">
+                            <div class="mb-3">
+                                <button type="button" id="generateNotice" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                                    🎉 生成文案
+                                </button>
+                            </div>
+                            <div class="bg-white p-3 rounded border border-purple-200">
+                                <textarea id="generatedNotice" rows="8" class="w-full p-3 border border-gray-300 rounded-lg text-sm font-mono" placeholder="點擊「生成文案」按鈕自動產生更版通知文案..." readonly></textarea>
+                            </div>
+                            <div class="flex gap-2 mt-2">
+                                <button type="button" id="copyNotice" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm font-medium transition-colors" disabled>
+                                    📋 複製
+                                </button>
+                                <button type="button" id="clearNotice" class="bg-gray-500 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm font-medium transition-colors" disabled>
+                                    🗑️ 清除
+                                </button>
+                            </div>
                         </div>
                     </div>
                     

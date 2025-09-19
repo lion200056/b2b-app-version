@@ -206,6 +206,13 @@ class VersionManager {
         document.getElementById('versionModal')?.classList.remove('hidden');
     }
 
+    editVersion(versionId) {
+        const version = this.versions.find(v => v.id === versionId);
+        if (version) {
+            this.openVersionModal(version);
+        }
+    }
+
     fillFormData(version) {
         const fields = {
             'version': version.version.replace('v', ''),
@@ -362,6 +369,9 @@ class VersionManager {
         const formData = this.getFormData();
         if (!formData) return;
 
+        // 在開始儲存前先記錄是否為編輯模式
+        const isEditing = this.editingId !== null;
+
         try {
             this.showLoading();
             
@@ -376,10 +386,10 @@ class VersionManager {
                 body: JSON.stringify(formData)
             });
 
-            this.closeVersionModal();
+            this.closeVersionModal(); // 這會將 editingId 設為 null
             await this.loadVersions();
             this.showNotification(
-                this.editingId ? '版本更新成功！' : '版本新增成功！', 
+                isEditing ? '儲存成功！' : '版本新增成功！', 
                 'success'
             );
         } catch (error) {
@@ -551,7 +561,7 @@ class VersionManager {
                         <div class="flex items-center gap-3">
                             ${this.isEditMode ? `
                                 <div class="flex gap-1" onclick="event.stopPropagation()">
-                                    <button onclick="versionManager.openVersionModal(${JSON.stringify(version).replace(/"/g, '&quot;')})" class="bg-white bg-opacity-20 hover:bg-opacity-30 text-white p-2 rounded-lg transition-all">
+                                    <button onclick="versionManager.editVersion(${version.id})" class="bg-white bg-opacity-20 hover:bg-opacity-30 text-white p-2 rounded-lg transition-all">
                                         ✏️
                                     </button>
                                     <button onclick="versionManager.deleteVersion(${version.id})" class="bg-red-500 bg-opacity-80 hover:bg-opacity-100 text-white p-2 rounded-lg transition-all">
@@ -702,6 +712,22 @@ function setToday(fieldId) {
     const today = new Date().toISOString().split('T')[0];
     const field = document.getElementById(fieldId);
     if (field) field.value = today;
+}
+
+// 切換更版通知文案生成器顯示/隱藏
+function toggleNoticeGenerator() {
+    const content = document.getElementById('noticeGeneratorContent');
+    const icon = document.getElementById('noticeToggleIcon');
+    
+    if (content && icon) {
+        if (content.classList.contains('hidden')) {
+            content.classList.remove('hidden');
+            icon.textContent = '🔽';
+        } else {
+            content.classList.add('hidden');
+            icon.textContent = '▶️';
+        }
+    }
 }
 
 // 初始化應用程式

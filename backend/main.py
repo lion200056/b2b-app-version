@@ -188,7 +188,7 @@ async def get_versions(os_filter: Optional[str] = None):
         # 建構 SQL 查詢
         base_query = '''
             SELECT id, version, os_type, release_type, status, description, 
-                   progress_summary, qa_date, submission_date, live_date, 
+                   planned_features, progress_summary, qa_date, submission_date, live_date, 
                    release_notes, remarks, created_at, updated_at
             FROM app_versions
         '''
