@@ -12,21 +12,21 @@ steps:
 - name: deploy
   image: docker:latest
   commands:
-  - echo "🚀 Starting auto deployment..."
+  - echo "Starting auto deployment..."
   - cd /home/jincoco/app/b2b-app-version
-  - echo "📥 Pulling latest code..."
+  - echo "Pulling latest code..."
   - git pull origin main
-  - echo "🛑 Stopping existing services..."
+  - echo "Stopping existing services..."
   - docker compose down --remove-orphans || true
-  - echo "🔨 Building and starting services..."
+  - echo "Building and starting services..."
   - docker compose up -d --build
-  - echo "⏳ Waiting for services to start..."
+  - echo "Waiting for services to start..."
   - sleep 10
-  - echo "🔍 Checking service status..."
+  - echo "Checking service status..."
   - docker compose ps
-  - echo "✅ Deployment completed!"
-  - echo "🌐 Frontend: http://localhost:3080"
-  - echo "🔗 Backend: http://localhost:8321"
+  - echo "Deployment completed!"
+  - echo "Frontend: http://localhost:3080"
+  - echo "Backend: http://localhost:8321"
   volumes:
   - name: docker-sock
     path: /var/run/docker.sock
