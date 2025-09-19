@@ -25,8 +25,8 @@ steps:
   - echo "Checking service status..."
   - docker compose ps
   - echo "Deployment completed!"
-  - echo "Frontend: http://localhost:3080"
-  - echo "Backend: http://localhost:8321"
+  - echo "Frontend http://localhost:3080"
+  - echo "Backend http://localhost:8321"
   volumes:
   - name: docker-sock
     path: /var/run/docker.sock
